@@ -18,7 +18,7 @@ namespace Abcmoney_Transfer.Controllers
         private readonly UserManager<Userlogin> _userManager;
         private readonly SignInManager<Userlogin> _signInManager;
         private readonly RoleManager<Identity> _roleManager;
-        public AccountController(TokenService tokenService, UserManager<Userlogin> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager)
+        public AccountController(TokenService tokenService, UserManager<Userlogin> userManager, SignInManager<Userlogin> signInManager, RoleManager<Identity> roleManager)
         {
             _tokenService = tokenService;
             _userManager = userManager;
@@ -62,7 +62,6 @@ namespace Abcmoney_Transfer.Controllers
                             SameSite = SameSiteMode.Strict,
                             Expires = DateTime.Now.AddDays(7) // Set the cookie expiration
                         });
-
                         return new ResponseModel(200, "Loged in Successfully", new { AccessToken = accessToken });
                     }
                     else
@@ -74,7 +73,6 @@ namespace Abcmoney_Transfer.Controllers
                 {
                     return new ResponseModel(500, "Invalid Model", GetModelErrors(ModelState));
                 }
-              
             }
             catch (Exception ex)
             {
@@ -87,21 +85,18 @@ namespace Abcmoney_Transfer.Controllers
         {
             if (!ModelState.IsValid)
             {
-
                 return new ResponseModel(500, "Invalid Model", GetModelErrors(ModelState)); ; // Returns validation errors
             }
-
             var existingUser = await _userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
             {
                 return new ResponseModel(400, "User already exists !!!");
             }
-
             // Ensure the SuperAdmin role exists
             var role = await _roleManager.FindByNameAsync("User");
             if (role == null)
             {
-                var roleCreationResult = await _roleManager.CreateAsync(new Identity { Name = "User" });
+                var roleCreationResult = await _roleManager.CreateAsync(new Identity{ Name= "User" });
                 if (!roleCreationResult.Succeeded)
                 {
                     // Handle role creation failure (e.g., log or throw an exception)
@@ -118,7 +113,6 @@ namespace Abcmoney_Transfer.Controllers
                 PhoneNumber = model.PhoneNumber,
                 EmailConfirmed = true
             };
-
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {

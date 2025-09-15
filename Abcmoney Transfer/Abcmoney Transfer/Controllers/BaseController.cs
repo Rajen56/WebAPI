@@ -1,19 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
-
-
+using IdentityModel;         // Needed for JwtClaimTypes
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 namespace Abcmoney_Transfer.Controllers
 {
     public static class ContextResolver
     {
         private static IHttpContextAccessor _contextAccessor;
-
-        public static Microsoft.AspNetCore.Http.HttpContext Context => _contextAccessor.HttpContext;
-
+        public static HttpContext Context => _contextAccessor.HttpContext;
         internal static void Configure(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
@@ -28,12 +30,12 @@ namespace Abcmoney_Transfer.Controllers
     }
     public static class IdentityExtensions
     {
-       public static string GetSessionId(this IIdentity identity)
+        public static string GetSessionId(this IIdentity identity)
         {
             try
             {
                 var _context = ContextResolver.Context;
-                if (_context.User.Identity.IsAuthenticated)
+                if (_context.User.Identity != null && _context.User.Identity.IsAuthenticated)
                 {
                     IEnumerable<Claim> claims = ((ClaimsIdentity)identity).Claims;
                     foreach (var claim in claims)
@@ -41,29 +43,21 @@ namespace Abcmoney_Transfer.Controllers
                         if (claim.Type == ApplicationClaim.SessionCode)
                             return claim.Value;
                     }
-
                 }
                 else
                 {
-                    var cookie = "";
-                    _context.Request.Cookies.TryGetValue(ApplicationClaim.SessionCode, out cookie);
-                    if (cookie != null)
+                    if (_context.Request.Cookies.TryGetValue(ApplicationClaim.SessionCode, out var cookie))
                     {
                         return cookie;
-
                     }
                     else
                     {
                         var guid = Guid.NewGuid().ToString();
-
-
                         CookieOptions option = new CookieOptions
                         {
                             HttpOnly = true,
                             Expires = DateTime.Now.AddDays(1)
                         };
-
-
                         _context.Response.Cookies.Append(ApplicationClaim.SessionCode, guid, option);
                         return guid;
                     }
@@ -72,14 +66,12 @@ namespace Abcmoney_Transfer.Controllers
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                throw;
             }
         }
         public static int GetIdentityUserId(this IIdentity identity)
         {
             var claim = ((ClaimsIdentity)identity).FindFirst("IdUid");
-            // Test for null to avoid issues during local testing
             return (claim != null) ? Convert.ToInt32(claim.Value) : 0;
         }
         public static string GetUserName(this IIdentity identity)
@@ -99,52 +91,46 @@ namespace Abcmoney_Transfer.Controllers
             var claim = ((ClaimsIdentity)identity).FindFirst("RoleIds");
             return (claim != null) ? claim.Value : "-1";
         }
+
         public static string GetFullName(this IIdentity identity)
         {
             var fn = ((ClaimsIdentity)identity).FindFirst("fn");
-
             return (fn != null) ? fn.Value : "";
         }
         public static string GetPicture(this IIdentity identity)
         {
             var picture = ((ClaimsIdentity)identity).FindFirst("picture");
-
             return picture == null ? "" : picture.Value;
         }
         public static long GetAppUserUserId(this IIdentity identity)
         {
-            //TODO: AppUser ID
             var claim = ((ClaimsIdentity)identity).FindFirst("appuserid");
-            // Test for null to avoid issues during local testing
             return (claim != null) ? Convert.ToInt64(claim.Value) : 0;
         }
     }
     public class ResponseModel
     {
-        private int v;
-        private string error;
-        public ResponseModel()
-        {
-        }
-        public ResponseModel(int v, string error)
-        {
-            this.v = v;
-            this.error = error;
-        }
         public int Code { get; set; }
         public string Message { get; set; }
         public object Data { get; set; }
+        public ResponseModel()
+        {
+        }
+        public ResponseModel(int code, string msg)
+        {
+            Code = code;
+            Message = msg;
+        }
         public ResponseModel(int code, string msg, object data)
         {
             Code = code;
             Message = msg;
             Data = data;
         }
-
     }
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [ApiAuthorize]
+    //[ApiAuthorize] // <-- This attribute is custom. Make sure you created it.
     public class BaseApiController : ControllerBase
     {
         private string _sessionCode;
@@ -156,11 +142,9 @@ namespace Abcmoney_Transfer.Controllers
         protected BaseApiController()
         {
         }
-
         [ApiExplorerSettings(IgnoreApi = true)]
         protected object HttpResponse(int statusCode, string msg, object data)
         {
-
             return new
             {
                 Code = statusCode,
@@ -180,7 +164,6 @@ namespace Abcmoney_Transfer.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         protected object ValidationResponse(List<string> errors)
         {
-
             return new
             {
                 Code = 600,
@@ -191,7 +174,6 @@ namespace Abcmoney_Transfer.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         protected object NotAuthorizedResponse()
         {
-
             return new
             {
                 Code = 401,
@@ -201,7 +183,6 @@ namespace Abcmoney_Transfer.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         protected object ErrorResponse(int statusCode, string msg)
         {
-
             return new
             {
                 Code = statusCode,
@@ -221,7 +202,6 @@ namespace Abcmoney_Transfer.Controllers
         }
         protected object HttpResponse(int statusCode, string msg, object data, int currentPage = 1)
         {
-
             return new
             {
                 Code = statusCode,
@@ -229,33 +209,33 @@ namespace Abcmoney_Transfer.Controllers
                 Data = data,
                 CurrentPage = currentPage,
             };
-        }
-        protected object SuccessResponse(string msg, object data)
-        {
-            return new
+            protected object SuccessResponse(string msg, object data)
             {
-                Code = 200,
-                Message = msg,
-                Data = data
-            };
-        }
-        protected object ErrorResponse(ModelStateDictionary modelState, int code, object data)
-        {
-            return new
+                return new
+                {
+                    Code = 200,
+                    Message = msg,
+                    Data = data
+                };
+            }
+            protected object ErrorResponse(ModelStateDictionary modelState, int code, object data)
             {
-                Code = code,
-                Message = string.Join("; ", ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)),
-                Data = data
-            };
-        }
-        protected ResponseModel ExceptionResponse(Exception ex, object data)
-        {
-            return new ResponseModel(500, ex.Message, data);
+                return new
+                {
+                    Code = code,
+                    Message = string.Join("; ", modelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)),
+                    Data = data
+                };
+            }
 
-        }
-        protected string GetModelErrors(ModelStateDictionary modelState)
-        {
-            return string.Join("; ", modelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
+            protected ResponseModel ExceptionResponse(Exception ex, object data)
+            {
+                return new ResponseModel(500, ex.Message, data);
+            }
+            protected string GetModelErrors(ModelStateDictionary modelState)
+            {
+                return string.Join("; ", modelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
+            }
         }
     }
 }

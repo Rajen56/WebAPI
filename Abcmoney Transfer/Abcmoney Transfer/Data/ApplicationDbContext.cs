@@ -12,7 +12,6 @@ namespace ABCExchange.Models
             : base(options)
         {
         }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -27,8 +26,7 @@ namespace ABCExchange.Models
             builder.Entity<AppUserToken>().ToTable("UserTokens");
             builder.Entity<SeedStatus>().ToTable("SeedStatus");
             builder.Entity<Transaction>().ToTable("Transaction").Property(t => t.TransactionId).ValueGeneratedOnAdd();
-
-            
+   
         }
     }
 }
