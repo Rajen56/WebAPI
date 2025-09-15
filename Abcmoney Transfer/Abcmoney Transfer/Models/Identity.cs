@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-
 namespace Abcmoney_Transfer.Models
 {
-    public class Identity
+    public class IIdentity
     {
         internal string Name;
-
         public class AppRole : IdentityRole<int> { }
         public class AppUserRole : IdentityUserRole<int> { }
         public class AppUserClaim : IdentityUserClaim<int> { }

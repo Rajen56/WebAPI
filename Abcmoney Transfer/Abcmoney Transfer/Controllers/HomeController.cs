@@ -17,7 +17,6 @@ namespace Abcmoney_Transfer.Controllers
         {
             return View();
         }
-
         public IActionResult Privacy()
         {
             return View();

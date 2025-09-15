@@ -17,8 +17,8 @@ namespace Abcmoney_Transfer.Controllers
         private readonly TokenService _tokenService;
         private readonly UserManager<Userlogin> _userManager;
         private readonly SignInManager<Userlogin> _signInManager;
-        private readonly RoleManager<Identity> _roleManager;
-        public AccountController(TokenService tokenService, UserManager<Userlogin> userManager, SignInManager<Userlogin> signInManager, RoleManager<Identity> roleManager)
+        private readonly RoleManager<IIdentity> _roleManager;
+        public AccountController(TokenService tokenService, UserManager<Userlogin> userManager, SignInManager<Userlogin> signInManager, RoleManager<IIdentity> roleManager)
         {
             _tokenService = tokenService;
             _userManager = userManager;
@@ -96,7 +96,7 @@ namespace Abcmoney_Transfer.Controllers
             var role = await _roleManager.FindByNameAsync("User");
             if (role == null)
             {
-                var roleCreationResult = await _roleManager.CreateAsync(new Identity{ Name= "User" });
+                var roleCreationResult = await _roleManager.CreateAsync(new IIdentity { Name= "User" });
                 if (!roleCreationResult.Succeeded)
                 {
                     // Handle role creation failure (e.g., log or throw an exception)
