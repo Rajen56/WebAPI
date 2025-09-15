@@ -25,6 +25,5 @@ namespace Abcmoney_Transfer.Models
         public decimal PayOutAmount { get; set; }
         public int TransactionCreatedBy { get; set; }
         public DateTime TransactionCreatedDate { get; set; }
-
     }
 }

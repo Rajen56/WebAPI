@@ -1,5 +1,6 @@
 ﻿using Abcmoney_Transfer.Controllers;
-using Microsoft.AspNetCore.Authorization;
+using Abcmoney_Transfer.Services;
+using Abcmoney_Transfer.View_model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Abcmoney_Transfer.Controllers
@@ -91,8 +92,6 @@ namespace Abcmoney_Transfer.Controllers
             {
                 return new ResponseModel(400, $"Error: {ex.Message}");
             }
-
         }
-
     }
 }

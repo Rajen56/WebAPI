@@ -6,5 +6,4 @@
         public bool IsSeeded { get; set; }
         public DateTime LastSeededOn { get; set; }
     }
-
 }

@@ -1,14 +1,14 @@
 ﻿using ABCExchange.Models;
+using Abcmoney_Transfer.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 public class DataSeeder
 {
     public async Task SeedSuperAdminAsync(IServiceProvider serviceProvider)
     {
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<Identity>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<Userlogin>>();
 
         // Check if already seeded
         var seedStatus = await dbContext.Set<SeedStatus>().FirstOrDefaultAsync();
@@ -24,7 +24,7 @@ public class DataSeeder
         var superAdminRole = await roleManager.FindByNameAsync(superAdminRoleName);
         if (superAdminRole == null)
         {
-            superAdminRole = new AppRole { Name = superAdminRoleName }; // Assign role name directly
+            superAdminRole = new Identity{Name = superAdminRoleName }; // Assign role name directly
             var roleCreationResult = await roleManager.CreateAsync(superAdminRole);
             if (!roleCreationResult.Succeeded)
             {
@@ -32,12 +32,11 @@ public class DataSeeder
                 throw new InvalidOperationException($"Failed to create role: {superAdminRoleName}");
             }
         }
-
         // Ensure the SuperAdmin user exists
         var superAdminUser = await userManager.FindByEmailAsync(superAdminEmail);
         if (superAdminUser == null)
         {
-            superAdminUser = new AppUser
+            superAdminUser = new Userlogin
             {
                 UserName = superAdminEmail,
                 Email = superAdminEmail,
@@ -58,7 +57,6 @@ public class DataSeeder
                 throw new InvalidOperationException("Failed to assign SuperAdmin role to the user.");
             }
         }
-
         // Mark as seeded
         if (seedStatus == null) 
         {
@@ -69,8 +67,7 @@ public class DataSeeder
             seedStatus.IsSeeded = true;
             seedStatus.LastSeededOn = DateTime.UtcNow;
         }
-
         await dbContext.SaveChangesAsync();
     }
 }
- bv
+ 

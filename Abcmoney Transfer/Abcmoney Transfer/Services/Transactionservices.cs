@@ -1,4 +1,6 @@
 ﻿
+using Abcmoney_Transfer.Models;
+using Abcmoney_Transfer.View_model;
 using Microsoft.AspNetCore.Identity;
 using System.Transactions;
 
@@ -14,8 +16,8 @@ namespace Abcmoney_Transfer.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly IForexService _forexService;
 
-        private readonly UserManager<AppUser> _userManager;
-        public TransanctionServices(ApplicationDbContext dbContext, UserManager<AppUser> userManager, IForexService forexService)
+        private readonly UserManager<Userlogin> _userManager;
+        public TransanctionServices(ApplicationDbContext dbContext, UserManager<Userlogin> userManager, IForexService forexService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
@@ -84,7 +86,7 @@ namespace Abcmoney_Transfer.Services
 
             // Map to the output view model (including the required TransferAmount property)
             return await (from t in query
-                          join ap in _dbContext.Set<AppUser>()
+                          join ap in _dbContext.Set<Userlogin>()
                           on t.TransactionCreatedBy equals ap.Id
                           select new TransactionOutputVM
                           {

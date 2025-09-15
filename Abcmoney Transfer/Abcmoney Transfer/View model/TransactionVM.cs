@@ -1,6 +1,5 @@
 ﻿namespace Abcmoney_Transfer.View_model
-{
-    
+{ 
        public class TransactionInputVM
         {
             public required string ReceiverFirstName { get; set; }
@@ -33,7 +32,6 @@
             public decimal PayOutAmount { get; set; }
             public string TransactionCreatedBy { get; set; }
             public DateTime TransactionCreatedDate { get; set; }
-
         }
 }
 

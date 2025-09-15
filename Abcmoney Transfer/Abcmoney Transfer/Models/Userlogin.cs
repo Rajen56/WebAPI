@@ -9,6 +9,5 @@ namespace Abcmoney_Transfer.Models
         public string LastName { get; set; } = "Admin";
         public string Address { get; set; } = "Kathmandu";
         public string Country { get; set; } = "Nepal";
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 using Abcmoney_Transfer.Models;
+using Abcmoney_Transfer.Services;
 using Abcmoney_Transfer.View_model;
-using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
@@ -18,7 +18,6 @@ namespace Abcmoney_Transfer.Controllers
         private readonly UserManager<Userlogin> _userManager;
         private readonly SignInManager<Userlogin> _signInManager;
         private readonly RoleManager<Identity> _roleManager;
-
         public AccountController(TokenService tokenService, UserManager<Userlogin> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager)
         {
             _tokenService = tokenService;
@@ -75,14 +74,13 @@ namespace Abcmoney_Transfer.Controllers
                 {
                     return new ResponseModel(500, "Invalid Model", GetModelErrors(ModelState));
                 }
-
+              
             }
             catch (Exception ex)
             {
                 return new ResponseModel(StatusCodes.Status500InternalServerError, ex.Message, model);
             }
         }
-
         [AllowAnonymous]
         [HttpPost("user/register")]
         public async Task<ResponseModel> Register(RegisterInputVM model)
@@ -110,7 +108,6 @@ namespace Abcmoney_Transfer.Controllers
                     return new ResponseModel(400, $"Failed to create role: {"User"}");
                 }
             }
-
             var user = new Userlogin
             {
                 FirstName = model.FirstName,
@@ -131,12 +128,9 @@ namespace Abcmoney_Transfer.Controllers
                     // Handle role assignment failure
                     return new ResponseModel(400, "Failed to assign  role to the user.");
                 }
-
                 return new ResponseModel(200, "User Registered Successfully !", result);
             }
-
             return new ResponseModel(400, "Unable to create User !!!");
-
         }
     }
 }

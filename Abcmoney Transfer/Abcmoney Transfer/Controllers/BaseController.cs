@@ -28,16 +28,13 @@ namespace Abcmoney_Transfer.Controllers
     }
     public static class IdentityExtensions
     {
-
-
-        public static string GetSessionId(this IIdentity identity)
+       public static string GetSessionId(this IIdentity identity)
         {
             try
             {
                 var _context = ContextResolver.Context;
                 if (_context.User.Identity.IsAuthenticated)
                 {
-
                     IEnumerable<Claim> claims = ((ClaimsIdentity)identity).Claims;
                     foreach (var claim in claims)
                     {
@@ -78,7 +75,6 @@ namespace Abcmoney_Transfer.Controllers
 
                 throw ex;
             }
-
         }
         public static int GetIdentityUserId(this IIdentity identity)
         {
@@ -115,7 +111,6 @@ namespace Abcmoney_Transfer.Controllers
 
             return picture == null ? "" : picture.Value;
         }
-
         public static long GetAppUserUserId(this IIdentity identity)
         {
             //TODO: AppUser ID
@@ -123,9 +118,7 @@ namespace Abcmoney_Transfer.Controllers
             // Test for null to avoid issues during local testing
             return (claim != null) ? Convert.ToInt64(claim.Value) : 0;
         }
-
     }
-
     public class ResponseModel
     {
         private int v;
@@ -149,8 +142,6 @@ namespace Abcmoney_Transfer.Controllers
         }
 
     }
-
-
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiAuthorize]

@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Abcmoney_Transfer.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 using System.Transactions;
 
 namespace ABCExchange.Models
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, int, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
+    public class ApplicationDbContext : IdentityDbContext<Userlogin, Identity, int, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -17,8 +18,8 @@ namespace ABCExchange.Models
             base.OnModelCreating(builder);
 
             // Change the table names for Identity tables
-            builder.Entity<AppUser>().ToTable("IdentityUser");
-            builder.Entity<AppRole>().ToTable("IdentityRoles");
+            builder.Entity<Userlogin>().ToTable("IdentityUser");
+            builder.Entity<Identity>().ToTable("IdentityRoles");
             builder.Entity<AppUserRole>().ToTable("UserRoles");
             builder.Entity<AppUserClaim>().ToTable("UserClaims");
             builder.Entity<AppUserLogin>().ToTable("UserLogins");
@@ -27,9 +28,7 @@ namespace ABCExchange.Models
             builder.Entity<SeedStatus>().ToTable("SeedStatus");
             builder.Entity<Transaction>().ToTable("Transaction").Property(t => t.TransactionId).ValueGeneratedOnAdd();
 
-            // Optional: Add any other custom configurations for entities
+            
         }
-
-        // Add DbSets for your other entities if required
     }
 }
