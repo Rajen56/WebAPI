@@ -6,7 +6,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.AspNetCore.Http;
-using IIdentify;
+using Identity;
 namespace Abcmoney_Transfer.Controllers
 {
     public static class ContextResolver
@@ -28,7 +28,7 @@ namespace Abcmoney_Transfer.Controllers
     }
     public static class IdentityExtensions
     {
-        // REMOVE this line: private static object JwtClaimTypes;
+       // REMOVE this line: private static object JwtClaimTypes;
         public static string GetSessionId(this IIdentity identity)
         {
             try

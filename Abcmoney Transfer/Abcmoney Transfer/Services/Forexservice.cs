@@ -3,13 +3,12 @@ using System.Text.Json;
 
 namespace Abcmoney_Transfer.Services
 {
-    
-      public interface IForexService
-        {
-            Task<IEnumerable<ForexviewModel>> GetExchangeRatesAsync();
-            Task<ForexviewModel> GetExchangeRateForCurrencyAsync(string currencyIso3);
-        }
 
+    public interface IForexService
+    {
+        Task<IEnumerable<ForexviewModel>> GetExchangeRatesAsync();
+        Task<ForexviewModel> GetExchangeRateForCurrencyAsync(string currencyIso3);
+    }
         public class ForexService : IForexService
         {
             private readonly HttpClient _httpClient;
@@ -37,7 +36,6 @@ namespace Abcmoney_Transfer.Services
                     throw new Exception($"Error fetching exchange rates: {ex.Message}");
                 }
             }
-
             public async Task<ForexviewModel> GetExchangeRateForCurrencyAsync(string currencyIso3)
             {
                 try
@@ -67,7 +65,6 @@ namespace Abcmoney_Transfer.Services
                     throw new Exception($"Error fetching exchange rate for currency '{currencyIso3}': {ex.Message}");
                 }
             }
-
             private async Task<JsonElement> FetchRatesAsync()
             {
                 var todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
@@ -86,7 +83,6 @@ namespace Abcmoney_Transfer.Services
                            .GetProperty("payload")[0]
                            .GetProperty("rates");
             }
-
             private ForexviewModel? MapToForexOutputVm(JsonElement rate)
             {
                 try
@@ -111,7 +107,6 @@ namespace Abcmoney_Transfer.Services
                     return null;
                 }
             }
-
             private decimal ParseDecimal(string value)
             {
                 return decimal.TryParse(value, out var result) ? result : 0;

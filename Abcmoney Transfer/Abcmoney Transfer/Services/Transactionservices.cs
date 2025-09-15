@@ -59,7 +59,6 @@ namespace Abcmoney_Transfer.Services
             {
                 return ex;
             }
-
         }
         public async Task<IEnumerable<TransactionOutputVM>> GetUserTransactionsByDateRangeAsync(int Id, DateTime? startDate = null, DateTime? endDate = null)
         {
@@ -83,7 +82,6 @@ namespace Abcmoney_Transfer.Services
             {
                 query = query.Where(t => t.TransactionCreatedDate <= endDate.Value);
             }
-
             // Map to the output view model (including the required TransferAmount property)
             return await (from t in query
                           join ap in _dbContext.Set<Userlogin>()
@@ -113,8 +111,6 @@ namespace Abcmoney_Transfer.Services
                           })
                 .ToListAsync();
         }
-
-
 
         /*     private string teRandomNumber()
              {

@@ -2,13 +2,11 @@
 using Abcmoney_Transfer.Services;
 using Abcmoney_Transfer.View_model;
 using Microsoft.AspNetCore.Mvc;
-
 namespace Abcmoney_Transfer.Controllers
 {
     [Route("api/")]
     [ApiExplorerSettings(GroupName = "access-control")]
     public class TransanctionApiController : BaseApiController
-
     {
         private readonly IForexService _forexervice;
         private readonly ITransactionServices _transactionServices;
@@ -27,7 +25,6 @@ namespace Abcmoney_Transfer.Controllers
                 {
                     return new ResponseModel(404, "No valid exchange rates found.");
                 }
-
                 return new ResponseModel(200, "", data.ToArray());
             }
             catch (Exception ex)
@@ -50,7 +47,6 @@ namespace Abcmoney_Transfer.Controllers
                     {
                         return new ResponseModel(400, "Transaction unsuccessful!!");
                     }
-
                     return new ResponseModel(200, "Amount Transfered Succefully", data);
                 }
                 else
@@ -62,9 +58,7 @@ namespace Abcmoney_Transfer.Controllers
             {
                 return new ResponseModel(400, $"Error: {ex.Message}");
             }
-
         }
-
         [HttpGet("userTransactionReport")]
         public async Task<ResponseModel> TransferReportForUser(DateTime? startDate = null, DateTime? endDate = null)
         {
@@ -80,7 +74,6 @@ namespace Abcmoney_Transfer.Controllers
                     {
                         return new ResponseModel(400, "No Transaction found!", null);
                     }
-
                     return new ResponseModel(200, "success", data);
                 }
                 else
