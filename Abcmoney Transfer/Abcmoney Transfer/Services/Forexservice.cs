@@ -1,12 +1,13 @@
-﻿using System.Text.Json;
+﻿using Abcmoney_Transfer.View_model;
+using System.Text.Json;
 
 namespace Abcmoney_Transfer.Services
 {
     
       public interface IForexService
         {
-            Task<IEnumerable<ForexOutputVm>> GetExchangeRatesAsync();
-            Task<ForexOutputVm> GetExchangeRateForCurrencyAsync(string currencyIso3);
+            Task<IEnumerable<ForexviewModel>> GetExchangeRatesAsync();
+            Task<ForexviewModel> GetExchangeRateForCurrencyAsync(string currencyIso3);
         }
 
         public class ForexService : IForexService
@@ -19,7 +20,7 @@ namespace Abcmoney_Transfer.Services
                 _httpClient = httpClient;
             }
 
-            public async Task<IEnumerable<ForexOutputVm>> GetExchangeRatesAsync()
+            public async Task<IEnumerable<ForexviewModel>> GetExchangeRatesAsync()
             {
                 try
                 {
@@ -37,7 +38,7 @@ namespace Abcmoney_Transfer.Services
                 }
             }
 
-            public async Task<ForexOutputVm> GetExchangeRateForCurrencyAsync(string currencyIso3)
+            public async Task<ForexviewModel> GetExchangeRateForCurrencyAsync(string currencyIso3)
             {
                 try
                 {
@@ -86,7 +87,7 @@ namespace Abcmoney_Transfer.Services
                            .GetProperty("rates");
             }
 
-            private ForexOutputVm? MapToForexOutputVm(JsonElement rate)
+            private ForexviewModel? MapToForexOutputVm(JsonElement rate)
             {
                 try
                 {
@@ -97,7 +98,7 @@ namespace Abcmoney_Transfer.Services
 
                     if (buy == 0 || sell == 0) return null;
 
-                    return new ForexOutputVm
+                    return new ForexviewModel
                     {
                         Currency = currency!,
                         Unit = unit,

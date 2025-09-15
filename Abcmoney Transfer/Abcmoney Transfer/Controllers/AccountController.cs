@@ -1,5 +1,6 @@
 ﻿
 using Abcmoney_Transfer.Models;
+using Abcmoney_Transfer.View_model;
 using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,7 @@ namespace Abcmoney_Transfer.Controllers
         private readonly SignInManager<Userlogin> _signInManager;
         private readonly RoleManager<Identity> _roleManager;
 
-        public AccountController(TokenService tokenService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager)
+        public AccountController(TokenService tokenService, UserManager<Userlogin> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager)
         {
             _tokenService = tokenService;
             _userManager = userManager;
@@ -102,7 +103,7 @@ namespace Abcmoney_Transfer.Controllers
             var role = await _roleManager.FindByNameAsync("User");
             if (role == null)
             {
-                var roleCreationResult = await _roleManager.CreateAsync(new AppRole { Name = "User" });
+                var roleCreationResult = await _roleManager.CreateAsync(new Identity { Name = "User" });
                 if (!roleCreationResult.Succeeded)
                 {
                     // Handle role creation failure (e.g., log or throw an exception)
@@ -110,7 +111,7 @@ namespace Abcmoney_Transfer.Controllers
                 }
             }
 
-            var user = new AppUser
+            var user = new Userlogin
             {
                 FirstName = model.FirstName,
                 MiddleName = model.MiddleName,

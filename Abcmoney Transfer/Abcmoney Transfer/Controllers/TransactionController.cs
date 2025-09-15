@@ -1,9 +1,6 @@
-﻿using ABCExchange.Services;
-using ABCExchange.ViewModel;
-using Abcmoney_Transfer.Controllers;
+﻿using Abcmoney_Transfer.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Abcmoney_Transfer.Controllers
 {

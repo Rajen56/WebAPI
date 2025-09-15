@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using ABCExchange.Authorize;
 using System.Security.Claims;
 using System.Security.Principal;
-using IdentityModel;
+
 
 namespace Abcmoney_Transfer.Controllers
 {
