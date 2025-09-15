@@ -13,7 +13,6 @@ namespace Abcmoney_Transfer.Controllers
     {
         private static IHttpContextAccessor _contextAccessor;
         public static HttpContext Context => _contextAccessor?.HttpContext; // Added null check
-
         internal static void Configure(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
