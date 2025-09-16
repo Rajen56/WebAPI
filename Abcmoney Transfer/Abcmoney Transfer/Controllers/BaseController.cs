@@ -6,7 +6,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.AspNetCore.Http;
-using Identity model;
 namespace Abcmoney_Transfer.Controllers
 {
     public static class ContextResolver

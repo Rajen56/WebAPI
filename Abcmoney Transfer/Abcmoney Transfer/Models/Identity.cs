@@ -3,12 +3,13 @@ namespace Abcmoney_Transfer.Models
 {
     public class IIdentity
     {
-        internal string Name;
-        public class AppRole : IdentityRole<int> { }
-        public class AppUserRole : IdentityUserRole<int> { }
-        public class AppUserClaim : IdentityUserClaim<int> { }
-        public class AppUserLogin : IdentityUserLogin<int> { }
-        public class AppUserToken : IdentityUserToken<int> { }
-        public class AppRoleClaim : IdentityRoleClaim<int> { }
-    }
-}
+    internal string Name;
+    public class Appuser : IdentityRole<int>{ }
+    public class AppRole : IdentityRole<int> { }
+    public class AppUserRole : IdentityUserRole<int> { }
+    public class AppUserClaim : IdentityUserClaim<int> { }
+    public class AppUserLogin : IdentityUserLogin<int> { }
+    public class AppUserToken : IdentityUserToken<int> { }
+    public class AppRoleClaim : IdentityRoleClaim<int> { }
+}  }
+
