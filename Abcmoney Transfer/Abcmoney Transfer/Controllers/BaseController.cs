@@ -6,7 +6,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.AspNetCore.Http;
-using Identity Controleller;
 namespace Abcmoney_Transfer.Controllers
 {
     public static class ContextResolver
@@ -80,7 +79,7 @@ namespace Abcmoney_Transfer.Controllers
         {
             var claimsIdentity = identity as ClaimsIdentity;
             // Use the actual JwtClaimTypes.Name from IdentityModel namespace
-            var claim = claimsIdentity?.FindFirst(IIdentity.JwtClaimTypes.Name);
+            var claim = claimsIdentity.FindFirst(ClaimTypes.Name); // fallback
             return (claim != null) ? claim.Value : "";
         }
         public static IEnumerable<string> GetRoles(this IIdentity identity)
@@ -90,7 +89,7 @@ namespace Abcmoney_Transfer.Controllers
 
             // Use the actual JwtClaimTypes.Role from IdentityModel namespace
             var roles = claimsIdentity.Claims
-                .Where(c => c.Type == .JwtClaimTypes.Role || c.Type == ClaimTypes.Role)
+                .Where(c => c.Type == ClaimTypes.Role)
                 .Select(c => c.Value);
             return roles;
         }

@@ -3,36 +3,17 @@ using static Abcmoney_Transfer.Models.IIdentity;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Transactions;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace AbcmoneyTransfer.Models
+namespace Abcmoney_Transfer.Data
 {
-    public class ApplicationDbContext
-        : IdentityDbContext<AppUser, AppRole, int, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
+    public class ApplicationDbContext :
+         IdentityDbContext<AppUser, AppRole, int, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
-        protected override void OnModelCreating(Modelbuilder builder)
-        {
-            base.OnModelCreating(builder);
-             //Identity tables
-            builder.Entity<AppUser>().ToTable("IdentityUser");
-            builder.Entity<AppRole>().ToTable("IdentityRoles");
-            builder.Entity<AppUserRole>().ToTable("UserRoles");
-            builder.Entity<AppUserClaim>().ToTable("UserClaims");
-            builder.Entity<AppUserLogin>().ToTable("UserLogins");
-            builder.Entity<AppRoleClaim>().ToTable("RoleClaims");
-            builder.Entity<AppUserToken>().ToTable("UserTokens");
-            
-            // Custom tables
-            builder.Entity<Seedstatus>().ToTable("SeedStatus");
-            builder.Entity<Transaction>()
-                   .ToTable("Transaction")
-            .Property(t => t.TransactionId)
-                   .ValueGeneratedOnAdd();
-        }
-        // DbSets for your custom
+            : base(options) { }
+
         public DbSet<Seedstatus> SeedStatuses { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
     }

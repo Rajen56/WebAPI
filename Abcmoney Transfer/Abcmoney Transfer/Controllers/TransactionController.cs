@@ -1,6 +1,6 @@
 ﻿using Abcmoney_Transfer.Controllers;
 using Abcmoney_Transfer.Services;
-using Abcmoney_Transfer.View_model;
+using Abcmoney_Transfer.Viewmodel;
 using Microsoft.AspNetCore.Mvc;
 namespace Abcmoney_Transfer.Controllers
 {

@@ -1,4 +1,6 @@
 ﻿using Abcmoney_Transfer.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
@@ -16,7 +18,6 @@ namespace Abcmoney_Transfer.Services
 
             return (AccessToken: accessToken, RefreshToken: refreshToken);
         }
-
         private string GenerateAccessToken(AppUser user, IList<string> roles)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
@@ -39,13 +40,11 @@ namespace Abcmoney_Transfer.Services
              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
              new Claim("sc", "web")
             };
-
             /*  // Add additional roles as separate claims
               foreach (var role in roles)
               {
                   claims.Add(new Claim(ClaimTypes.Role, role));
               }*/
-
             var token = new JwtSecurityToken(
                 issuer: "ABSExchange",
                 audience: "ABSExchange",
@@ -55,7 +54,6 @@ namespace Abcmoney_Transfer.Services
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
         private string GenerateRefreshToken(AppUser user, IList<string> roles)
         {
             var refreshKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSecretKey));
@@ -66,7 +64,6 @@ namespace Abcmoney_Transfer.Services
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
-
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -78,7 +75,6 @@ namespace Abcmoney_Transfer.Services
                 expires: DateTime.Now.AddDays(7), // Refresh token expiration time
                 signingCredentials: credentials
             );
-
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }

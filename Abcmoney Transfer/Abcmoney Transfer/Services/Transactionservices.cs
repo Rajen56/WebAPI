@@ -1,8 +1,13 @@
 ﻿
+using Abcmoney_Transfer.Data;
 using Abcmoney_Transfer.Models;
 using Abcmoney_Transfer.View_model;
+using Abcmoney_Transfer.Viewmodel;
+using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Data.Entity;
 using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Abcmoney_Transfer.Services
 {
@@ -23,7 +28,6 @@ namespace Abcmoney_Transfer.Services
             _userManager = userManager;
             _forexService = forexService;
         }
-
         public async Task<dynamic> TransferAmount(TransactionInputVM vm, int Id)
         {
             try
@@ -31,7 +35,7 @@ namespace Abcmoney_Transfer.Services
                 var forexRate = await _forexService.GetExchangeRateForCurrencyAsync("MYR");
                 var exchangeRatePerOne = forexRate.Buy / forexRate.Unit;
                 var user = await _userManager.FindByIdAsync(Id.ToString());
-                Transaction transaction = new Transaction
+                var transaction = new Transactioninformation
                 {
                     TransactionCreatedDate = DateTime.Now,
                     TransactionCreatedBy = Id,
@@ -51,7 +55,7 @@ namespace Abcmoney_Transfer.Services
                     ExchangeRate = exchangeRatePerOne,
                     PayOutAmount = vm.TransferAmount * exchangeRatePerOne
                 };
-                await _dbContext.Set<Transaction>().AddAsync(transaction);
+                await _dbContext.Set<Transactioninformation>().AddAsync(transaction);
                 var data = await _dbContext.SaveChangesAsync();
                 return data;
             }
@@ -71,7 +75,7 @@ namespace Abcmoney_Transfer.Services
             {
                 throw new ArgumentException("Start date cannot be greater than end date.");
             }
-            var query = _dbContext.Set<Transaction>().AsQueryable();
+            var query = _dbContext.Set<Transactioninformation>().AsQueryable();
 
             // Apply date filtering only if dates are provided
             if (startDate.HasValue)
@@ -106,24 +110,9 @@ namespace Abcmoney_Transfer.Services
                               PayOutAmount = t.PayOutAmount,
                               TransactionCreatedDate = t.TransactionCreatedDate,
                               TransactionCreatedBy = $"{ap.FirstName} {ap.MiddleName ?? ""} {ap.LastName}"
-                              // Ensure this maps to the correct property in Transaction
-                              // Add other properties as needed
+                             
                           })
                 .ToListAsync();
         }
-
-        /*     private string teRandomNumber()
-             {
-                 var random = new Random();
-                 var digits = "0123456789";
-
-                 // Generate remaining 7 random digits
-                 var randomDigits = new char[10];
-                 for (int i = 0; i < 10;i++)
-                 {
-                     randomDigits[i] = digits[random.Next(digits.Length)];
-                 }
-                 return   new string(randomDigits);
-             }*/
     }
 }

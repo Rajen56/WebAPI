@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Abcmoney_Transfer.Models
 {
     public class Transactioninformation

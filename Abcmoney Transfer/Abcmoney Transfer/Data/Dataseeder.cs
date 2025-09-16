@@ -1,6 +1,9 @@
 ﻿using Abcmoney_Transfer;
+using Abcmoney_Transfer.Data;
 using Abcmoney_Transfer.Models;
+using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Data.Entity;
 
 public class DataSeeder
 {

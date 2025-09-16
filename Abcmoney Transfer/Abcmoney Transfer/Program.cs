@@ -1,5 +1,8 @@
 
+using Abcmoney_Transfer.Data;
+using Abcmoney_Transfer.Models;
 using Abcmoney_Transfer.Services;
+using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +11,6 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
 using static Abcmoney_Transfer.Models.IIdentity;
@@ -19,19 +21,17 @@ builder.Services.AddControllers()
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddScoped<DataSeeder>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .ConfigureWarnings(warnings =>
-               warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<Userlogin, AppRole>()
+builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddHttpContextAccessor();
 
 var configuration = builder.Configuration;
-var serviceRegistrar = new ServiceRegistrar();
-serviceRegistrar.Register(builder.Services, configuration);
+//var serviceRegistrar = new ServiceRegistrar();
+//serviceRegistrar.Register(builder.Services, configuration);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -69,54 +69,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // Configure Swagger
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("access-control", new OpenApiInfo
-    {
-        Title = "Access Control",
-        Version = "v1"
-    });
-
-    c.DocInclusionPredicate((docName, apiDesc) =>
-    {
-        if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
-
-        string? groupName = methodInfo.DeclaringType?
-            .GetCustomAttributes(true)
-            .OfType<ApiExplorerSettingsAttribute>()
-            .Select(attr => attr.GroupName)
-            .FirstOrDefault();
-
-        return groupName == docName;
-    });
-
-    var securityScheme = new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Description = "Bearer token",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT"
-    };
-    c.AddSecurityDefinition("Bearer", securityScheme);
-
-    var securityRequirement = new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    };
-    c.AddSecurityRequirement(securityRequirement);
-});
 var app = builder.Build();
 
 // Ensure that DataSeeder runs during app startup
@@ -128,11 +80,7 @@ using (var scope = app.Services.CreateScope())
 }
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/access-control/swagger.json", "Access Control");
-    });
+   
 }
 
 app.UseHttpsRedirection();

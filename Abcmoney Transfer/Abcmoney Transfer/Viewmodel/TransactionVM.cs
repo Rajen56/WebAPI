@@ -1,4 +1,4 @@
-﻿namespace Abcmoney_Transfer.View_model
+﻿namespace Abcmoney_Transfer.Viewmodel
 { 
        public class TransactionInputVM
         {
