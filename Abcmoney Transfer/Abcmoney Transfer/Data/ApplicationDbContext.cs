@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Transactions;
 using static Abcmoney_Transfer.Models.IIdentity;
-
 namespace AbcmoneyTransfer.Models
 {
     public class ApplicationDbContext
-        : IdentityDbContext<AppUser,AppRole,int,AppUserClaim,AppUserRole,AppUserLogin, AppRoleClaim, AppUserToken>
+        :IdentityDbContext<AppUser,AppRole,int,AppUserClaim,AppUserRole,AppUserLogin, AppRoleClaim, AppUserToken>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
