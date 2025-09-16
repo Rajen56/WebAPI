@@ -13,7 +13,6 @@ namespace AbcmoneyTransfer.Models
             : base(options)
         {
         }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -34,7 +33,6 @@ namespace AbcmoneyTransfer.Models
                    .Property(t => t.TransactionId)
                    .ValueGeneratedOnAdd();
         }
-
         // Add DbSets for other entities
         public DbSet<Seedstatus>SeedStatuses { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
