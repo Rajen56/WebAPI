@@ -9,7 +9,6 @@ public class DataSeeder
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IIdentity>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
-
         // Check if already seeded
         var seedStatus = await dbContext.Set<Seedstatus>().FirstOrDefaultAsync();
         if (seedStatus?.IsSeeded == true)
@@ -18,19 +17,19 @@ public class DataSeeder
         var superAdminRoleName = "SuperAdmin";
         var superAdminEmail = "superadmin@example.com";
         var superAdminPassword = "SuperSecurePassword123!";
-        // Ensure the SuperAdmin role exists
+        // Ensure the SuperAdmin role 
         var superAdminRole = await roleManager.FindByNameAsync(superAdminRoleName);
         if (superAdminRole == null)
         {
-            superAdminRole = new IIdentity{Name = superAdminRoleName }; // Assign role name directly
+            superAdminRole = new IIdentity{Name = superAdminRoleName }; 
             var roleCreationResult = await roleManager.CreateAsync(superAdminRole);
             if (!roleCreationResult.Succeeded)
             {
-                // Handle role creation failure (e.g., log or throw an exception)
+                // Handle role creation failure (Log 
                 throw new InvalidOperationException($"Failed to create role: {superAdminRoleName}");
             }
         }
-        // Ensure the SuperAdmin user exists
+        // Ensure the SuperAdmin user 
         var superAdminUser = await userManager.FindByEmailAsync(superAdminEmail);
         if (superAdminUser == null)
         {
@@ -57,12 +56,12 @@ public class DataSeeder
         // Mark as seeded
         if (seedStatus == null) 
         {
-            dbContext.Set<Seedstatus>().Add(new Seedstatus { IsSeeded = true, LastSeededOn = DateTime.UtcNow });
+           dbContext.Set<Seedstatus>().Add(new Seedstatus { IsSeeded = true, LastSeededOn = DateTime.UtcNow });
         }
         else
         {
-            seedStatus.IsSeeded = true;
-            seedStatus.LastSeededOn = DateTime.UtcNow;
+           seedStatus.IsSeeded = true;
+           seedStatus.LastSeededOn = DateTime.UtcNow;
         }
         await dbContext.SaveChangesAsync();
     }

@@ -13,12 +13,10 @@ namespace AbcmoneyTransfer.Models
             : base(options)
         {
         }
-
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(Modelbuilder builder)
         {
             base.OnModelCreating(builder);
-
-            // Rename Identity tables
+             //Identity tables
             builder.Entity<AppUser>().ToTable("IdentityUser");
             builder.Entity<AppRole>().ToTable("IdentityRoles");
             builder.Entity<AppUserRole>().ToTable("UserRoles");
@@ -26,17 +24,16 @@ namespace AbcmoneyTransfer.Models
             builder.Entity<AppUserLogin>().ToTable("UserLogins");
             builder.Entity<AppRoleClaim>().ToTable("RoleClaims");
             builder.Entity<AppUserToken>().ToTable("UserTokens");
-
+            
             // Custom tables
-            builder.Entity<SeedStatus>().ToTable("SeedStatus");
+            builder.Entity<Seedstatus>().ToTable("SeedStatus");
             builder.Entity<Transaction>()
                    .ToTable("Transaction")
             .Property(t => t.TransactionId)
                    .ValueGeneratedOnAdd();
         }
-
-        // DbSets for your custom entities
-        public DbSet<SeedStatus> SeedStatuses { get; set; }
+        // DbSets for your custom
+        public DbSet<Seedstatus> SeedStatuses { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
     }
 }
