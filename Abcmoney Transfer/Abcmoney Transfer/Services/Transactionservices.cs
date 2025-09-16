@@ -1,7 +1,7 @@
 ﻿
 using Abcmoney_Transfer.Data;
 using Abcmoney_Transfer.Models;
-using Abcmoney_Transfer.View_model;
+using Abcmoney_Transfer.Viewmodel;
 using Abcmoney_Transfer.Viewmodel;
 using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Identity;
