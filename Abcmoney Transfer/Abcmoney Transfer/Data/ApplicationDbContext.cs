@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Abcmoney_Transfer.Data
 {
-    public class ApplicationDbContext :
+    public class ApplicationDbContext:
+
          IdentityDbContext<AppUser, AppRole, int, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

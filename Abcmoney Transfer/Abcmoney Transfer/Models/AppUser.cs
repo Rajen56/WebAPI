@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 namespace Abcmoney_Transfer.Models
 {
-    public class AppUser : IdentityUser<int>
+    public class AppUser : IdentityUser
     {
         public string FirstName { get; set; } = "Rajen";
         public string MiddleName { get; set; } = "Prasad";
