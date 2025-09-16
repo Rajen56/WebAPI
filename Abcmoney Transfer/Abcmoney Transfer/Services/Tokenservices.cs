@@ -9,7 +9,7 @@ namespace Abcmoney_Transfer.Services
         private readonly string _secretKey = configuration["JwtSettings:SecretKey"];
         private readonly string _refreshSecretKey = configuration["JwtSettings:RefreshSecretKey"];
 
-        public (string AccessToken, string RefreshToken) GenerateTokens(Userlogin user, IList<string> roles)
+        public (string AccessToken, string RefreshToken) GenerateTokens(AppUser user, IList<string> roles)
         {
             var accessToken = GenerateAccessToken(user, roles);
             var refreshToken = GenerateRefreshToken(user, roles);
@@ -17,7 +17,7 @@ namespace Abcmoney_Transfer.Services
             return (AccessToken: accessToken, RefreshToken: refreshToken);
         }
 
-        private string GenerateAccessToken(Userlogin user, IList<string> roles)
+        private string GenerateAccessToken(AppUser user, IList<string> roles)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -56,7 +56,7 @@ namespace Abcmoney_Transfer.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string GenerateRefreshToken(Userlogin user, IList<string> roles)
+        private string GenerateRefreshToken(AppUser user, IList<string> roles)
         {
             var refreshKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSecretKey));
             var credentials = new SigningCredentials(refreshKey, SecurityAlgorithms.HmacSha256);

@@ -15,10 +15,10 @@ namespace Abcmoney_Transfer.Controllers
     public class AccountController : BaseApiController
     {
         private readonly TokenService _tokenService;
-        private readonly UserManager<Userlogin> _userManager;
-        private readonly SignInManager<Userlogin> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IIdentity> _roleManager;
-        public AccountController(TokenService tokenService, UserManager<Userlogin> userManager, SignInManager<Userlogin> signInManager, RoleManager<IIdentity> roleManager)
+        public AccountController(TokenService tokenService, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<IIdentity> roleManager)
         {
             _tokenService = tokenService;
             _userManager = userManager;
@@ -103,7 +103,7 @@ namespace Abcmoney_Transfer.Controllers
                     return new ResponseModel(400, $"Failed to create role: {"User"}");
                 }
             }
-            var user = new Userlogin
+            var user = new AppUser
             {
                 FirstName = model.FirstName,
                 MiddleName = model.MiddleName,

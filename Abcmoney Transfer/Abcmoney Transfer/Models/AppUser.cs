@@ -2,7 +2,7 @@
 
 namespace Abcmoney_Transfer.Models
 {
-    public class Userlogin : IdentityUser<int>
+    public class AppUser : IdentityUser<int>
     {
         public string FirstName { get; set; } = "Admin";
         public string MiddleName { get; set; } = "Admin";

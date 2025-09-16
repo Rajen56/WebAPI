@@ -8,7 +8,7 @@ public class DataSeeder
     {
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IIdentity>>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<Userlogin>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
 
         // Check if already seeded
         var seedStatus = await dbContext.Set<Seedstatus>().FirstOrDefaultAsync();
@@ -34,7 +34,7 @@ public class DataSeeder
         var superAdminUser = await userManager.FindByEmailAsync(superAdminEmail);
         if (superAdminUser == null)
         {
-            superAdminUser = new Userlogin
+            superAdminUser = new AppUser
             {
                 UserName = superAdminEmail,
                 Email = superAdminEmail,
