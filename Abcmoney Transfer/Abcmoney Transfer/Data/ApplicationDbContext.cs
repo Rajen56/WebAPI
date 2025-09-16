@@ -1,22 +1,25 @@
 ﻿using Abcmoney_Transfer.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Transactions;
 using static Abcmoney_Transfer.Models.IIdentity;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+using System.Transactions;
+
 namespace AbcmoneyTransfer.Models
 {
     public class ApplicationDbContext
-        :IdentityDbContext<AppUser,AppRole,int,AppUserClaim,AppUserRole,AppUserLogin, AppRoleClaim, AppUserToken>
+        : IdentityDbContext<AppUser, AppRole, int, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             // Rename Identity tables
-            builder.Entity<Appuser>().ToTable("IdentityUser");
+            builder.Entity<AppUser>().ToTable("IdentityUser");
             builder.Entity<AppRole>().ToTable("IdentityRoles");
             builder.Entity<AppUserRole>().ToTable("UserRoles");
             builder.Entity<AppUserClaim>().ToTable("UserClaims");
@@ -24,15 +27,16 @@ namespace AbcmoneyTransfer.Models
             builder.Entity<AppRoleClaim>().ToTable("RoleClaims");
             builder.Entity<AppUserToken>().ToTable("UserTokens");
 
-            // Your custom tables
-            builder.Entity<Seedstatus>().ToTable("SeedStatus");
+            // Custom tables
+            builder.Entity<SeedStatus>().ToTable("SeedStatus");
             builder.Entity<Transaction>()
                    .ToTable("Transaction")
-                   .Property(t => t.TransactionId)
+            .Property(t => t.TransactionId)
                    .ValueGeneratedOnAdd();
         }
-        // Add DbSets for other entities
-        public DbSet<Seedstatus>SeedStatuses { get; set; }
-        public Dbset<Transaction> Transactions { get; set; }
+
+        // DbSets for your custom entities
+        public DbSet<SeedStatus> SeedStatuses { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }
