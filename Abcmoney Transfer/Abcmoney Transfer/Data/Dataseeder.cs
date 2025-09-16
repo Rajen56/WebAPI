@@ -10,7 +10,8 @@ public class DataSeeder
     public async Task SeedSuperAdminAsync(IServiceProvider serviceProvider)
     {
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IIdentity>>();
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        //var roleManager = serviceProvider.GetRequiredService<RoleManager<IIdentity>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
         // Check if already seeded
         var seedStatus = await dbContext.Set<Seedstatus>().FirstOrDefaultAsync();
@@ -24,7 +25,9 @@ public class DataSeeder
         var superAdminRole = await roleManager.FindByNameAsync(superAdminRoleName);
         if (superAdminRole == null)
         {
-            superAdminRole = new IIdentity{Name = superAdminRoleName }; 
+            superAdminRole = new IdentityRole(superAdminRoleName);
+
+            //superAdminRole = new IIdentity{Name = superAdminRoleName }; 
             var roleCreationResult = await roleManager.CreateAsync(superAdminRole);
             if (!roleCreationResult.Succeeded)
             {
