@@ -1,6 +1,5 @@
 ﻿using Abcmoney_Transfer.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 using static Abcmoney_Transfer.Models.IIdentity;
 
@@ -35,6 +34,6 @@ namespace AbcmoneyTransfer.Models
         }
         // Add DbSets for other entities
         public DbSet<Seedstatus>SeedStatuses { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public Dbset<Transaction> Transactions { get; set; }
     }
 }
