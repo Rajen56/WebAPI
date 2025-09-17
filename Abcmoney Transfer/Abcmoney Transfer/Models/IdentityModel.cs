@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+
 namespace Abcmoney_Transfer.Models
 {
-    public class IIdentity
+    public class IdentityModel
     {
-        public string Name { get; set; }
-        public string JwtClaimTypes { get; set; }
-        public class Appuser : IdentityRole<int> { }
         public class AppRole : IdentityRole<int> { }
         public class AppUserRole : IdentityUserRole<int> { }
         public class AppUserClaim : IdentityUserClaim<int> { }
@@ -14,4 +12,3 @@ namespace Abcmoney_Transfer.Models
         public class AppRoleClaim : IdentityRoleClaim<int> { }
     }
 }
-

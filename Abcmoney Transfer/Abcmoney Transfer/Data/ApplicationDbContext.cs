@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using System.Transactions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using static Abcmoney_Transfer.Models.IdentityModel;
 
 namespace Abcmoney_Transfer.Data
 {
@@ -12,7 +13,7 @@ namespace Abcmoney_Transfer.Data
 
          IdentityDbContext<AppUser, AppRole, int, AppUserClaim, AppUserRole, AppUserLogin, AppRoleClaim, AppUserToken>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContex(DbContextOptions<AbcmoneyTransfer.Models.ApplicationDbContext> options)
             : base(options) { }
 
         public DbSet<Seedstatus> SeedStatuses { get; set; }

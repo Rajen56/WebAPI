@@ -7,6 +7,8 @@ using System.Data.Entity;
 
 public class DataSeeder
 {
+    private object roleManager;
+
     public async Task SeedSuperAdminAsync(IServiceProvider serviceProvider)
     {
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
