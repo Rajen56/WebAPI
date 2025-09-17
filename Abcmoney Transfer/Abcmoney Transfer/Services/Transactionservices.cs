@@ -2,7 +2,6 @@
 using Abcmoney_Transfer.Data;
 using Abcmoney_Transfer.Models;
 using Abcmoney_Transfer.Viewmodel;
-using Abcmoney_Transfer.Viewmodel;
 using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Data.Entity;
@@ -18,11 +17,11 @@ namespace Abcmoney_Transfer.Services
     }
     public class TransanctionServices : ITransactionServices
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContex _dbContext;
         private readonly IForexService _forexService;
 
         private readonly UserManager<AppUser> _userManager;
-        public TransanctionServices(ApplicationDbContext dbContext, UserManager<AppUser> userManager, IForexService forexService)
+        public TransanctionServices(ApplicationDbContex dbContext, UserManager<AppUser> userManager, IForexService forexService)
         {
             _dbContext = dbContext;
             _userManager = userManager;

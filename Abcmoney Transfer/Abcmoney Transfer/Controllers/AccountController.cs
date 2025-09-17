@@ -1,14 +1,10 @@
 ﻿
 using Abcmoney_Transfer.Models;
-using Abcmoney_Transfer.Services;
-using Abcmoney_Transfer.Viewmodel;
 using Abcmoney_Transfer.Viewmodel;
 using ABCmoneysend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using System.Security.Principal;
 namespace Abcmoney_Transfer.Controllers
 {
@@ -98,7 +94,8 @@ namespace Abcmoney_Transfer.Controllers
             var role = await _roleManager.FindByNameAsync("User");
             if (role == null)
             {
-                var roleCreationResult = await _roleManager.CreateAsync(new IIdentity {Name= "User" });
+                var gf = new IdentityRole("User");
+                var roleCreationResult = await _roleManager.CreateAsync((IIdentity)gf);
                 if (!roleCreationResult.Succeeded)
                 {
                     // Handle role creation failure (e.g., log or throw an exception)

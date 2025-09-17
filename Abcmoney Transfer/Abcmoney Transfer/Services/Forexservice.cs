@@ -113,6 +113,4 @@ namespace Abcmoney_Transfer.Services
                 return decimal.TryParse(value, out var result) ? result : 0;
             }
         }
-
-    
 }

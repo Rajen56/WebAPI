@@ -2,6 +2,7 @@
 using Abcmoney_Transfer.Data;
 using Abcmoney_Transfer.Models;
 using Abcmoney_Transfer.Services;
+using ABCmoneysend.Services;
 using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -13,19 +14,22 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
-using static Abcmoney_Transfer.Models.IIdentity;
+using static Abcmoney_Transfer.Models.IdentityModel;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
                 .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = null);
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddScoped<DataSeeder>();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContex>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<AppUser, AppRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+.AddEntityFrameworkStores<ApplicationDbContex>()
+.AddDefaultTokenProviders();
+
+// Make sure you have this for RoleManager
+builder.Services.AddScoped<RoleManager<IdentityRole>>();
 
 builder.Services.AddHttpContextAccessor();
 
