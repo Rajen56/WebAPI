@@ -8,5 +8,5 @@ namespace Abcmoney_Transfer.Areas.Admin.Controllers
         {
             return View();
         }
-    }
+    } 
 }
