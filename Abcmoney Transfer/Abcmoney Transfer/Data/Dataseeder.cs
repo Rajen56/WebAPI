@@ -10,7 +10,7 @@ public class DataSeeder
     public async Task SeedSuperAdminAsync(IServiceProvider serviceProvider)
     {
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        //var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         //var roleManager = serviceProvider.GetRequiredService<RoleManager<IIdentity>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
         // Check if already seeded
