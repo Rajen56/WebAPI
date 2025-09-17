@@ -1,41 +1,36 @@
-
 using Abcmoney_Transfer.Data;
 using Abcmoney_Transfer.Models;
 using Abcmoney_Transfer.Services;
 using ABCmoneysend.Services;
-using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Text;
 using static Abcmoney_Transfer.Models.IdentityModel;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllersWithViews(); // This registers ITempDataDictionaryFactory
+// OR
+builder.Services.AddMvc(); // This also registers the required services
+
+// Add services
 builder.Services.AddControllers()
-                .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = null);
+    .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = null);
+
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddScoped<DataSeeder>();
-builder.Services.AddDbContext<ApplicationDbContex>(options =>
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-.AddEntityFrameworkStores<ApplicationDbContex>()
-.AddDefaultTokenProviders();
-
-// Make sure you have this for RoleManager
-builder.Services.AddScoped<RoleManager<IdentityRole>>();
+// Register Identity with custom AppUser & AppRole
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddHttpContextAccessor();
 
-var configuration = builder.Configuration;
-//var serviceRegistrar = new ServiceRegistrar();
-//serviceRegistrar.Register(builder.Services, configuration);
+// Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -47,13 +42,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidateLifetime = true, // Ensure the token has not expired
-            ValidIssuer = "ABSExchange", // Match the issuer in TokenService
-            ValidAudience = "ABSExchange", // Match the audience in TokenService
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)) // Use the same secret key
+            ValidateLifetime = true,
+            ValidIssuer = "ABSExchange",
+            ValidAudience = "ABSExchange",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
 
-        // Optional: Customize token handling events
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
@@ -72,25 +66,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configure Swagger
 var app = builder.Build();
 
-// Ensure that DataSeeder runs during app startup
-using (var scope = app.Services.CreateScope())
-{
-    var serviceProvider = scope.ServiceProvider;
-    var dataSeeder = serviceProvider.GetRequiredService<DataSeeder>();
-    await dataSeeder.SeedSuperAdminAsync(serviceProvider);
-}
-if (app.Environment.IsDevelopment())
-{
-   
-}
+// Run Seeder
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+//    await dataSeeder.SeedSuperAdminAsync(scope.ServiceProvider);
+//}
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapControllerRoute(
+              name: "default",
+              pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Abcmoney_Transfer.Models
 {
     public class Transactioninformation
     {
+        [Key]
         public int TransactionId { get; set; }
         public string SenderFirstName { get; set; }
         public string SenderMiddleName { get; set; }

@@ -4,7 +4,10 @@ namespace Abcmoney_Transfer.Models
 {
     public class IdentityModel
     {
-        public class AppRole : IdentityRole<int> { }
+        //public class AppRole : IdentityRole<int>
+        //{ 
+        //    public string? rolename { get; set; }
+        //}
         public class AppUserRole : IdentityUserRole<int> { }
         public class AppUserClaim : IdentityUserClaim<int> { }
         public class AppUserLogin : IdentityUserLogin<int> { }

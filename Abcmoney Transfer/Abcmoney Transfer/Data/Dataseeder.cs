@@ -3,75 +3,83 @@ using Abcmoney_Transfer.Data;
 using Abcmoney_Transfer.Models;
 using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Data.Entity;
-
+using Microsoft.EntityFrameworkCore;
+using static Abcmoney_Transfer.Models.IdentityModel;
 public class DataSeeder
 {
-    private object roleManager;
-
     public async Task SeedSuperAdminAsync(IServiceProvider serviceProvider)
     {
-        var dbContext = serviceProvider.GetRequiredService<ApplicationDbContex>();
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-       // var roleManager = serviceProvider.GetRequiredService<RoleManager<IIdentity>>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
-        // Check if already seeded
-        var seedStatus = await dbContext.Set<Seedstatus>().FirstOrDefaultAsync();
-        if (seedStatus?.IsSeeded == true)
-            return;
-        // Seed roles and SuperAdmin
-        var superAdminRoleName = "SuperAdmin";
-        var superAdminEmail = "superadmin@example.com";
-        var superAdminPassword = "SuperSecurePassword123!";
-        // Ensure the SuperAdmin role 
-        var superAdminRole = await roleManager.FindByNameAsync(superAdminRoleName);
-        if (superAdminRole == null)
-        {
-            superAdminRole = new IdentityRole(superAdminRoleName);
+        using var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-            //superAdminRole = new IIdentity{Name = superAdminRoleName }; 
-            var roleCreationResult = await roleManager.CreateAsync(superAdminRole);
-            if (!roleCreationResult.Succeeded)
-            {
-                // Handle role creation failure (Log 
-                throw new InvalidOperationException($"Failed to create role: {superAdminRoleName}");
-            }
-        }
-        // Ensure the SuperAdmin user 
-        var superAdminUser = await userManager.FindByEmailAsync(superAdminEmail);
-        if (superAdminUser == null)
-        {
-            superAdminUser = new AppUser
+        //var seedStatus = await dbContext.Set<Seedstatus>().FirstOrDefaultAsync();
+        //if (seedStatus?.IsSeeded == true)
+        //    return;
+
+        const string superAdminRoleName = "SuperAdmin";
+        const string superAdminEmail = "superadmin@example.com";
+        const string superAdminPassword = "SuperSecurePassword123!";
+
+        // 1. Ensure Role exists
+        //var superAdminRole = await roleManager.FindByNameAsync(superAdminRoleName);
+        //if (superAdminRole == null)
+        //{
+        var role = new IdentityRole(superAdminRoleName);
+        var roleResult = await roleManager.CreateAsync(role);
+
+        if (!roleResult.Succeeded)
+                throw new InvalidOperationException(
+                    $"Failed to create role '{superAdminRoleName}': {string.Join(", ", roleResult.Errors.Select(e => e.Description))}"
+                );
+        //}
+
+        // 2. Ensure User exists
+        //var superAdminUser = await userManager.FindByEmailAsync(superAdminEmail);
+        //if (superAdminUser == null)
+        //{
+           var superAdminUser = new AppUser
             {
                 UserName = superAdminEmail,
                 Email = superAdminEmail,
                 EmailConfirmed = true
             };
-            var userCreationResult = await userManager.CreateAsync(superAdminUser, superAdminPassword);
-            if (!userCreationResult.Succeeded)
-            {
-                // Handle user creation failure (e.g., log or throw an exception)
-                throw new InvalidOperationException("Failed to create SuperAdmin user.");
-            }
-            // Assign SuperAdmin role to the user
-            var roleAssignmentResult = await userManager.AddToRoleAsync(superAdminUser, superAdminRoleName);
-            if (!roleAssignmentResult.Succeeded)
-            {
-                // Handle role assignment failure
-                throw new InvalidOperationException("Failed to assign SuperAdmin role to the user.");
-            }
-        }
-        // Mark as seeded
-        if (seedStatus == null) 
+
+            var userResult = await userManager.CreateAsync(superAdminUser, superAdminPassword);
+            if (!userResult.Succeeded)
+                throw new InvalidOperationException(
+                    $"Failed to create SuperAdmin user: {string.Join(", ", userResult.Errors.Select(e => e.Description))}"
+                );
+        //}
+
+        // 3. Ensure User has Role
+        if (!await userManager.IsInRoleAsync(superAdminUser, superAdminRoleName))
         {
-           dbContext.Set<Seedstatus>().Add(new Seedstatus { IsSeeded = true, LastSeededOn = DateTime.UtcNow });
+            var roleAssignResult = await userManager.AddToRoleAsync(superAdminUser, superAdminRoleName);
+            if (!roleAssignResult.Succeeded)
+                throw new InvalidOperationException(
+                    $"Failed to assign role '{superAdminRoleName}' to SuperAdmin user: {string.Join(", ", roleAssignResult.Errors.Select(e => e.Description))}"
+                );
         }
-        else
-        {
-           seedStatus.IsSeeded = true;
-           seedStatus.LastSeededOn = DateTime.UtcNow;
-        }
+
+        // 4. Update Seed Status
+        //if (seedStatus == null)
+        //{
+        //    dbContext.Set<Seedstatus>().Add(new Seedstatus
+        //    {
+        //        IsSeeded = true,
+        //        LastSeededOn = DateTime.UtcNow
+        //    });
+        //}
+        //else
+        //{
+        //    seedStatus.IsSeeded = true;
+        //    seedStatus.LastSeededOn = DateTime.UtcNow;
+        //}
+
         await dbContext.SaveChangesAsync();
     }
 }
- 
+
+

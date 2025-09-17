@@ -4,8 +4,8 @@ using Abcmoney_Transfer.Models;
 using Abcmoney_Transfer.Viewmodel;
 using AbcmoneyTransfer.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Data.Entity;
 using System.Transactions;
+using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Abcmoney_Transfer.Services
@@ -17,11 +17,11 @@ namespace Abcmoney_Transfer.Services
     }
     public class TransanctionServices : ITransactionServices
     {
-        private readonly ApplicationDbContex _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IForexService _forexService;
 
         private readonly UserManager<AppUser> _userManager;
-        public TransanctionServices(ApplicationDbContex dbContext, UserManager<AppUser> userManager, IForexService forexService)
+        public TransanctionServices(ApplicationDbContext dbContext, UserManager<AppUser> userManager, IForexService forexService)
         {
             _dbContext = dbContext;
             _userManager = userManager;
@@ -74,44 +74,39 @@ namespace Abcmoney_Transfer.Services
             {
                 throw new ArgumentException("Start date cannot be greater than end date.");
             }
-            var query = _dbContext.Set<Transactioninformation>().AsQueryable();
+
 
             // Apply date filtering only if dates are provided
-            if (startDate.HasValue)
+            if (startDate.HasValue || endDate.HasValue)
             {
-                query = query.Where(t => t.TransactionCreatedDate >= startDate.Value);
+                var query = await (from t in _dbContext.Transactions
+                                   where (!startDate.HasValue || t.TransactionCreatedDate >= startDate.Value) &&
+                                         (!endDate.HasValue || t.TransactionCreatedDate <= endDate.Value)
+                                   select new TransactionOutputVM
+                                   {
+                                       TransactionId = t.TransactionId,
+                                       SenderAddress = t.SenderAddress,
+                                       SenderCountry = t.SenderCountry,
+                                       SenderFirstName = t.SenderFirstName,
+                                       SenderLastName = t.SenderLastName,
+                                       SenderMiddleName = t.SenderMiddleName,
+                                       ReceiverFirstName = t.ReceiverFirstName,
+                                       ReceiverMiddleName = t.ReceiverMiddleName,
+                                       ReceiverLastName = t.ReceiverLastName,
+                                       ReceiverAddress = t.ReceiverAddress,
+                                       ReceiverCountry = t.ReceiverCountry,
+                                       BankName = t.BankName,
+                                       AccountNumber = t.AccountNumber,
+                                       TransferAmount = t.TransferAmount,
+                                       ExchangeRate = t.ExchangeRate,
+                                       PayOutAmount = t.PayOutAmount,
+                                       TransactionCreatedDate = t.TransactionCreatedDate
+                                   })
+                       .ToListAsync();
+                return query;
             }
-            if (endDate.HasValue)
-            {
-                query = query.Where(t => t.TransactionCreatedDate <= endDate.Value);
-            }
-            // Map to the output view model (including the required TransferAmount property)
-            return await (from t in query
-                          join ap in _dbContext.Set<AppUser>()
-                          on t.TransactionCreatedBy equals ap.Id
-                          select new TransactionOutputVM
-                          {
-                              TransactionId = t.TransactionId,
-                              SenderAddress = t.SenderAddress,
-                              SenderCountry = t.SenderCountry,
-                              SenderFirstName = t.SenderFirstName,
-                              SenderLastName = t.SenderLastName,
-                              SenderMiddleName = t.SenderMiddleName,
-                              ReceiverFirstName = t.ReceiverFirstName,
-                              ReceiverMiddleName = t.ReceiverMiddleName,
-                              ReceiverLastName = t.ReceiverLastName,
-                              ReceiverAddress = t.ReceiverAddress,
-                              ReceiverCountry = t.ReceiverCountry,
-                              BankName = t.BankName,
-                              AccountNumber = t.AccountNumber,
-                              TransferAmount = t.TransferAmount,
-                              ExchangeRate = t.ExchangeRate,
-                              PayOutAmount = t.PayOutAmount,
-                              TransactionCreatedDate = t.TransactionCreatedDate,
-                              TransactionCreatedBy = $"{ap.FirstName} {ap.MiddleName ?? ""} {ap.LastName}"
-                             
-                          })
-                .ToListAsync();
+            return null;
+            
         }
     }
 }
